@@ -5,14 +5,12 @@ services:
     ports:
       - "8080:80"
     restart: always
-
   whoami:
     image: traefik/whoami
     container_name: whoami
     ports:
       - "8081:80"
     restart: always
-
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
@@ -21,7 +19,6 @@ services:
     volumes:
       - uptime-kuma-data:/app/data
     restart: always
-
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
     container_name: nginx-proxy-manager
@@ -33,7 +30,6 @@ services:
       - npm-data:/data
       - npm-letsencrypt:/etc/letsencrypt
     restart: always
-
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -43,7 +39,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     restart: always
-
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -52,7 +47,20 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: always
-
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    restart: always
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail.yml:/etc/promtail/config.yml
+    restart: always
 volumes:
   uptime-kuma-data:
   npm-data:
